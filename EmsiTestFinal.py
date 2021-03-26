@@ -7,17 +7,19 @@ import re
 ##if a word matches, then it goes and checks the next word the user had put in
 ##for a match
 
-linesFound = []     ##list to stoer the line that a match was found on
-lineNumber = []     ##list to store the line number that a match was found on
-word_list = []      ##list of lists with the contents of each line from the poem
-count = 0           ##increment variable to keep track of how many of the user's words were found in the current line
+linesFound = []
+lineNumber = []
+nearMatchNumber = []
+word_list = []
+count = 0
 
-file = open('lepanto.txt', encoding="utf8") ##opens file, I had to use the encoding option in order for the txt. file to be read without an EOFError.
+file = open('lepanto.txt', encoding="utf8")
 for line in file: ##go through line by line and make each line a list of words within the list per line
     stripped_line = line.strip()
     line_list = stripped_line.split()
     word_list.append(line_list)
 file.close()
+
 
 value = str(input("Enter the words you remember: "))
 userList = value.split()
@@ -27,21 +29,34 @@ def listtoString(s): ##function to convert a list into a string
     str1 = " "
     return str1.join(s)
 
-for i in range(len(word_list)): ##nested loop iterates through each line of the poem checking each word the user entered to see if a word exists in the current line
+for i in range(len(word_list)):
     currentLine = listtoString(word_list[i]) ##variable initialized to current line of poem being read and made into a string
     otherLine = re.sub(r'[^\w\s]', '', currentLine) ##string variable assigned to currentLine with punctuation removed
     for j in range(len(userList)):
-        if(userList[j] in otherLine.lower() or userList[j] in word_list[i]): ##increments counter if a word is found in either the list at the current index
-            count += 1                                                       ##or in the converted string 
+        if(userList[j] in otherLine.lower() or userList[j] in word_list[i]): ##increments counter if a word is found in either the raw list
+            count += 1                                                       ##or in the string 
         if j == len(userList)-1:##
             if count == len(userList): ##appends contents of line that has all the words the user entered to a list
-                linesFound.append(word_list[i]) ##appends the matching line(s) to a list
+                linesFound.append(word_list[i])
                 lineNumber.append(i+1) ##appends the number of the line the word was found on, using +1 since the list starts at 0
+            if count > 0 and (count / len(userList) >= 0.75) and count != len(userList):
+                nearMatchNumber.append(i+1)
             count = 0 ##reset counter when at last word to search
         else: ##continues if current word is not in list
             continue
         
-print("Found words on: ", len(lineNumber), " line(s).")
-for k in lineNumber: ##prints out each line all words user entered were found on
-    foundLine = listtoString(word_list[k-1])
-    print(foundLine, "at line: ", k)
+print("Found close matches on: ", len(nearMatchNumber), " line(s).")
+
+if len(nearMatchNumber) > 0:
+    print("Could it be: ")
+    for l in nearMatchNumber:
+        closeMatch = listtoString(word_list[l-1])
+        print(closeMatch, " at line: ", l)
+
+if len(lineNumber) > 0:
+    print(len(lineNumber), " line(s) match.")
+    for k in lineNumber: ##prints out each line all words user entered were found on
+        foundLine = listtoString(word_list[k-1])
+        print(foundLine, " at line: ", k)
+elif len(lineNumber) == 0:
+    print("No matches found.")
