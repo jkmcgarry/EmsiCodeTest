@@ -41,7 +41,7 @@ for i in range(len(word_list)):
         else: ##continues if current word is not in list
             continue
         
-print("Found words on: ", len(lineNumber), " lines.")
+print("Found words on: ", len(lineNumber), " line(s).")
 for k in lineNumber: ##prints out each line all words user entered were found on
     foundLine = listtoString(word_list[k-1])
     print(foundLine, "at line: ", k)
