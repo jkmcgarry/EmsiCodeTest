@@ -7,12 +7,12 @@ import re
 ##if a word matches, then it goes and checks the next word the user had put in
 ##for a match
 
-linesFound = []
-lineNumber = []
-word_list = []
-count = 0
+linesFound = []     ##list to stoer the line that a match was found on
+lineNumber = []     ##list to store the line number that a match was found on
+word_list = []      ##list of lists with the contents of each line from the poem
+count = 0           ##increment variable to keep track of how many of the user's words were found in the current line
 
-file = open('lepanto.txt', encoding="utf8")
+file = open('lepanto.txt', encoding="utf8") ##opens file, I had to use the encoding option in order for the txt. file to be read without an EOFError.
 for line in file: ##go through line by line and make each line a list of words within the list per line
     stripped_line = line.strip()
     line_list = stripped_line.split()
@@ -27,15 +27,15 @@ def listtoString(s): ##function to convert a list into a string
     str1 = " "
     return str1.join(s)
 
-for i in range(len(word_list)):
+for i in range(len(word_list)): ##nested loop iterates through each line of the poem checking each word the user entered to see if a word exists in the current line
     currentLine = listtoString(word_list[i]) ##variable initialized to current line of poem being read and made into a string
     otherLine = re.sub(r'[^\w\s]', '', currentLine) ##string variable assigned to currentLine with punctuation removed
     for j in range(len(userList)):
-        if(userList[j] in otherLine.lower() or userList[j] in word_list[i]): ##increments counter if a word is found in either the raw list
-            count += 1                                                       ##or in the string 
+        if(userList[j] in otherLine.lower() or userList[j] in word_list[i]): ##increments counter if a word is found in either the list at the current index
+            count += 1                                                       ##or in the converted string 
         if j == len(userList)-1:##
             if count == len(userList): ##appends contents of line that has all the words the user entered to a list
-                linesFound.append(word_list[i])
+                linesFound.append(word_list[i]) ##appends the matching line(s) to a list
                 lineNumber.append(i+1) ##appends the number of the line the word was found on, using +1 since the list starts at 0
             count = 0 ##reset counter when at last word to search
         else: ##continues if current word is not in list
